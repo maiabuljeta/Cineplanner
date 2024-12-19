@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film Breakdown Sheet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <style>
+        :root {
+            --primary-bg: #000000;
+            --secondary-bg: #111111;
+            --text-color: #ffffff;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+            background: linear-gradient(45deg, var(--accent-color), #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(45deg, var(--accent-color), #9b59b6);
+            border-radius: 2px;
+        }
+
+        h2 {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .card {
+            background: var(--secondary-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: var(--primary-bg);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            margin-bottom: 1rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            background-color: rgba(52, 152, 219, 0.2);
+            font-weight: 600;
+        }
+
+        tr {
+            transition: all 0.3s ease;
+        }
+
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        #downloadCallSheet {
+            display: block;
+            width: 100%;
+            font-size: 1.2rem;
+            margin-top: 2rem;
+            background-color: var(--success-color);
+        }
+
+        #downloadCallSheet:hover {
+            background-color: #27ae60;
+        }
+
+        .shot-item, .time-block {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            cursor: move;
+        }
+
+        .shot-item:hover, .time-block:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .time-block {
+            background-color: rgba(52, 152, 219, 0.2);
+        }
+
+        .shot-time {
+            width: 100px;
+            display: inline-block;
+            margin-right: 1rem;
+        }
+
+        #shotListContainer {
+            min-height: 200px;
+        }
+    </style>
+<script defer data-domain="cineplanner.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script type="text/javascript" src="https://tiiny.host/ad-script.js"></script></head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎥 Film Breakdown Sheet</h1>
+        </div>
+
+        <div class="card">
+            <h2>Scene Information</h2>
+            <input type="text" id="sceneNumber" placeholder="Scene Number">
+            <input type="text" id="sceneTitle" placeholder="Scene Title">
+            <input type="text" id="location" placeholder="Location">
+            <select id="interiorExterior">
+                <option value="">Interior/Exterior</option>
+                <option value="INT">Interior</option>
+                <option value="EXT">Exterior</option>
+            </select>
+            <select id="dayNight">
+                <option value="">Day/Night</option>
+                <option value="DAY">Day</option>
+                <option value="NIGHT">Night</option>
+            </select>
+            <input type="date" id="shootDate" placeholder="Shoot Date">
+            <textarea id="sceneDescription" placeholder="Scene Description" rows="4"></textarea>
+        </div>
+
+        <div class="card">
+            <h2>Cast</h2>
+            <table id="castTable">
+                <thead>
+                    <tr>
+                        <th>Character</th>
+                        <th>Actor</th>
+                        <th>Costume</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be added dynamically -->
+                </tbody>
+            </table>
+            <button onclick="addCastRow()">Add Cast Member</button>
+        </div>
+
+        <div class="card">
+            <h2>Props and Set Dressing</h2>
+            <table id="propsTable">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be added dynamically -->
+                </tbody>
+            </table>
+            <button onclick="addPropRow()">Add Prop/Set Dressing</button>
+        </div>
+
+        <div class="card">
+            <h2>Shot List and Schedule</h2>
+            <div id="shotListContainer">
+                <!-- Shot items and time blocks will be added dynamically -->
+            </div>
+            <button onclick="addShotItem()">Add Shot</button>
+            <button onclick="addTimeBlock()">Add Time Block</button>
+        </div>
+
+        <button id="downloadCallSheet">Download Call Sheet PDF</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        function addCastRow() {
+            const table = document.getElementById('castTable').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td><input type="text" placeholder="Character"></td>
+                <td><input type="text" placeholder="Actor"></td>
+                <td><input type="text" placeholder="Costume"></td>
+            `;
+        }
+
+        function addPropRow() {
+            const table = document.getElementById('propsTable').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td><input type="text" placeholder="Item"></td>
+                <td><input type="text" placeholder="Description"></td>
+                <td><input type="number" placeholder="Quantity"></td>
+            `;
+        }
+
+        function addShotItem() {
+            const shotList = document.getElementById('shotListContainer');
+            const newShot = document.createElement('div');
+            newShot.className = 'shot-item';
+            newShot.innerHTML = `
+                <input type="text" placeholder="Shot Number" style="width: 100px;">
+                <input type="text" placeholder="Shot Size" style="width: 100px;">
+                <input type="text" placeholder="Description" style="width: calc(100% - 220px);">
+            `;
+            shotList.appendChild(newShot);
+            updateShotNumbers();
+        }
+
+        function addTimeBlock() {
+            const shotList = document.getElementById('shotListContainer');
+            const newTimeBlock = document.createElement('div');
+            newTimeBlock.className = 'time-block';
+            newTimeBlock.innerHTML = `
+                <input type="time" class="shot-time">
+                <input type="text" placeholder="Description" style="width: calc(100% - 120px);">
+            `;
+            shotList.appendChild(newTimeBlock);
+        }
+
+        function updateShotNumbers() {
+            const shots = document.querySelectorAll('.shot-item');
+            shots.forEach((shot, index) => {
+                const shotNumberInput = shot.querySelector('input[placeholder="Shot Number"]');
+                shotNumberInput.value = `${index + 1}`;
+            });
+        }
+
+        new Sortable(document.getElementById('shotListContainer'), {
+            animation: 150,
+            filter: '.time-block',
+            onEnd: updateShotNumbers
+        });
+
+        document.getElementById('downloadCallSheet').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFontSize(20);
+            doc.text("🎥 Call Sheet", 105, 15, null, null, "center");
+            
+            // Add shoot date
+            doc.setFontSize(12);
+            doc.text(`Shoot Date: ${document.getElementById('shootDate').value}`, 20, 25);
+            
+            // Add scene information
+            doc.text(`Scene Number: ${document.getElementById('sceneNumber').value}`, 20, 35);
+            doc.text(`Scene Title: ${document.getElementById('sceneTitle').value}`, 20, 45);
+            doc.text(`Location: ${document.getElementById('location').value}`, 20, 55);
+            doc.text(`INT/EXT: ${document.getElementById('interiorExterior').value}`, 20, 65);
+            doc.text(`Day/Night: ${document.getElementById('dayNight').value}`, 20, 75);
+            
+            // Add cast information
+            doc.text("Cast:", 20, 90);
+            let yPos = 100;
+            document.querySelectorAll('#castTable tbody tr').forEach((row, index) => {
+                const inputs = row.querySelectorAll('input');
+                doc.text(`${index + 1}. ${inputs[0].value} - ${inputs[1].value} (${inputs[2].value})`, 30, yPos);
+                yPos += 10;
+            });
+            
+            // Add props information
+            doc.text("Props:", 20, yPos + 10);
+            yPos += 20;
+            document.querySelectorAll('#propsTable tbody tr').forEach((row, index) => {
+                const inputs = row.querySelectorAll('input');
+                doc.text(`${index + 1}. ${inputs[0].value} (${inputs[2].value})`, 30, yPos);
+                yPos += 10;
+            });
+            
+            // Add shot list and schedule
+            doc.text("Shot List and Schedule:", 20, yPos + 10);
+            yPos += 20;
+            document.querySelectorAll('#shotListContainer > div').forEach((item) => {
+                if (item.classList.contains('time-block')) {
+                    const inputs = item.querySelectorAll('input');
+                    const time = new Date(`2000-01-01T${inputs[0].value}`);
+                    const formattedTime = time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                    doc.text(`${formattedTime} - ${inputs[1].value}`, 30, yPos);
+                } else {
+                    const inputs = item.querySelectorAll('input');
+                    doc.text(`${inputs[0].value}. ${inputs[1].value}: ${inputs[2].value}`, 30, yPos);
+                }
+                yPos += 10;
+                if (yPos > 280) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+            });
+            
+            // Save the PDF
+            doc.save("CallSheet.pdf");
+        });
+    </script>
+</body>
+</html>
